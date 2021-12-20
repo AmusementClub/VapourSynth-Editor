@@ -1,0 +1,80 @@
+name: Build Windows
+
+on:
+  push:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'which tag to upload to'
+        default: ''
+
+jobs:
+  build-windows:
+    runs-on: windows-2019
+
+    defaults:
+      run:
+        shell: cmd
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Setup MSVC
+      uses: ilammy/msvc-dev-cmd@v1
+
+    - name: Download VapourSynth headers
+      shell: bash
+      run: |
+        curl -s -o vs.zip -L https://github.com/vapoursynth/vapoursynth/archive/refs/tags/R57.zip
+        unzip -q vs.zip
+        mv vapoursynth-*/ vapoursynth/
+        mkdir -p "C:/Program Files/VapourSynth/sdk/include/"
+        mv vapoursynth/include "C:/Program Files/VapourSynth/sdk/include/vapoursynth"
+
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v1
+      with:
+        path: ../Qt
+        key: ${{ runner.os }}-qt
+
+    - name: Setup Qt
+      uses: jurplel/install-qt-action@v2
+      with:
+        cached: ${{ steps.cache-qt.outputs.cache-hit }}
+        version: '5.15.2'
+        arch: win64_msvc2019_64
+        host: 'windows'
+        target: 'desktop'
+
+    - name: Build
+      run: |
+        cd pro
+        echo > local_quirks.pri
+        qmake.exe -nocache "CONFIG+=release" pro.pro
+        nmake.exe release -f Makefile
+
+    - name: Upload
+      uses: actions/upload-artifact@v2
+      with:
+        name: artifact
+        path: build/release-64bit-msvc
+
+    - name: Compress artifact for release
+      if: github.event_name == 'workflow_dispatch' && github.event.inputs.tag != ''
+      run: |
+        cd build\release-64bit-msvc
+        7z a -t7z -mx=7 ../../vsedit-windows-x64.${{ github.event.inputs.tag }}.7z .
+
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      if: github.event_name == 'workflow_dispatch' && github.event.inputs.tag != ''
+      with:
+        tag_name: ${{ github.event.inputs.tag }}
+        files: vsedit-windows-x64.${{ github.event.inputs.tag }}.7z
+        fail_on_unmatched_files: true
+        generate_release_notes: false
+        prerelease: true
