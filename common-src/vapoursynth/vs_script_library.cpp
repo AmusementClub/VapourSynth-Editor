@@ -207,30 +207,8 @@ bool VSScriptLibrary::initLibrary()
 	);
 
 	QString libraryFullPath;
-	m_vsScriptLibrary.setFileName(libraryName);
 	m_vsScriptLibrary.setLoadHints(QLibrary::ExportExternalSymbolsHint);
-	bool loaded = m_vsScriptLibrary.load();
-
-#ifdef Q_OS_WIN
-	if(!loaded)
-	{
-		QSettings settings("HKEY_LOCAL_MACHINE\\SOFTWARE",
-			QSettings::NativeFormat);
-		libraryFullPath =
-			settings.value("VapourSynth/VSScriptDLL").toString();
-		if(libraryFullPath.isEmpty())
-		{
-			libraryFullPath = settings.value(
-				"Wow6432Node/VapourSynth/VSScriptDLL").toString();
-		}
-
-		if(!libraryFullPath.isEmpty())
-		{
-			m_vsScriptLibrary.setFileName(libraryFullPath);
-			loaded = m_vsScriptLibrary.load();
-		}
-	}
-#endif // Q_OS_WIN
+	bool loaded = false;
 
 	if(!loaded)
 	{
