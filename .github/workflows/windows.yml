@@ -57,16 +57,43 @@ jobs:
         qmake.exe -nocache "CONFIG+=release" pro.pro
         nmake.exe release -f Makefile
 
+    - name: Remove unnecessary files
+      run: |
+        cd build/release-64bit-msvc
+        del vc_redist.x64.exe
+        del opengl32sw.dll
+        del libEGL.dll
+        del libGLESv2.dll
+        del d3dcompiler_47.dll
+        del imageformats\qicns.dll
+        del imageformats\qico.dll
+        del imageformats\qgif.dll
+        del imageformats\qjpeg.dll
+        del imageformats\qsvg.dll
+        del imageformats\qtga.dll
+        del imageformats\qtiff.dll
+        del imageformats\qwbmp.dll
+
+    - name: Set portable mode
+      shell: bash
+      run: |
+        cd build
+        mkdir release
+        mv release-64bit-msvc release/vsedit
+        cd release/vsedit
+        echo "[common]" > vsedit.config
+        echo "vapoursynth_library_paths=.." >> vsedit.config
+
     - name: Upload
       uses: actions/upload-artifact@v2
       with:
         name: artifact
-        path: build/release-64bit-msvc
+        path: build/release
 
     - name: Compress artifact for release
       if: github.event_name == 'workflow_dispatch' && github.event.inputs.tag != ''
       run: |
-        cd build\release-64bit-msvc
+        cd build\release
         7z a -t7z -mx=7 ../../vsedit-windows-x64.${{ github.event.inputs.tag }}.7z .
 
     - name: Release
