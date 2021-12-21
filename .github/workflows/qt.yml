@@ -1,4 +1,4 @@
-name: Build Windows
+name: Build Qt
 
 on:
   push:
@@ -17,22 +17,8 @@ jobs:
         shell: cmd
 
     steps:
-    - name: Checkout repo
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-
     - name: Setup MSVC
       uses: ilammy/msvc-dev-cmd@v1
-
-    - name: Download VapourSynth headers
-      shell: bash
-      run: |
-        curl -s -o vs.zip -L https://github.com/vapoursynth/vapoursynth/archive/refs/tags/R57.zip
-        unzip -q vs.zip
-        mv vapoursynth-*/ vapoursynth/
-        mkdir -p "C:/Program Files/VapourSynth/sdk/include/"
-        mv vapoursynth/include "C:/Program Files/VapourSynth/sdk/include/vapoursynth"
 
     - name: Cache Qt
       id: cache-qt
@@ -66,42 +52,25 @@ jobs:
         call ../qt-src/configure.bat --prefix=d:\qt-install -static -static-runtime -no-opengl -release -ltcg -qt-zlib -qt-sqlite -no-sql-odbc -qt-libpng -qt-libjpeg -skip qt3d -skip qtactiveqt -skip qtcharts -skip qtconnectivity -skip qtdatavis3d -skip qtdoc -skip qtmultimedia -skip qtwayland -skip qtscxml -skip qtwebview -skip qtwebengine -skip qttranslations -skip qtlottie -skip qtmqtt -skip qtopcua -skip qtserialport -skip qtserialbus -skip qtvirtualkeyboard -skip qtwebchannel -skip qtpositioning -skip qtquick3d -skip qtsensors -skip qtcoap -skip qtnetworkauth -skip qtquicktimeline -skip qtremoteobjects -skip qtshadertools -feature-windeployqt -no-feature-linguist -no-feature-designer -no-feature-pixeltool -no-feature-assistant -no-feature-distancefieldgenerator -no-feature-qtattributionsscanner -no-feature-qtplugininfo -no-feature-macdeployqt -no-feature-qdbus -no-feature-qtdiag
         ninja install
 
-    - name: Build
-      shell: cmd
-      run: |
-        set PATH=d:\qt-install\bin;%PATH%
-        cd pro
-        echo # > local_quirks.pri
-        qmake.exe -nocache "CONFIG+=release" pro.pro
-        nmake.exe release -f Makefile
-
-    - name: Set portable mode
-      shell: bash
-      run: |
-        cd build
-        mv release-64bit-msvc release
-        cd release
-        #echo "[common]" > vsedit.config
-        #echo "vapoursynth_library_paths=.." >> vsedit.config
-
     - name: Upload
       uses: actions/upload-artifact@v2
       with:
-        name: artifact
-        path: build/release
+        name: qt6-static
+        path: d:\qt-install
+        retention-days: 1
 
     - name: Compress artifact for release
       if: github.event_name == 'workflow_dispatch' && github.event.inputs.tag != ''
       run: |
-        cd build\release
-        7z a -t7z -mx=7 ../../vsedit-windows-x64.${{ github.event.inputs.tag }}.7z .
+        cd d:\qt-install
+        7z a -t7z -mx=7 ../qt6-static.${{ github.event.inputs.tag }}.7z .
 
     - name: Release
       uses: softprops/action-gh-release@v1
       if: github.event_name == 'workflow_dispatch' && github.event.inputs.tag != ''
       with:
         tag_name: ${{ github.event.inputs.tag }}
-        files: vsedit-windows-x64.${{ github.event.inputs.tag }}.7z
+        files: qt6-install.${{ github.event.inputs.tag }}.7z
         fail_on_unmatched_files: true
         generate_release_notes: false
         prerelease: true
