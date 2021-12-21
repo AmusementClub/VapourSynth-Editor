@@ -51,9 +51,10 @@ jobs:
         target: 'desktop'
 
     - name: Build
+      shell: cmd
       run: |
         cd pro
-        echo > local_quirks.pri
+        echo # > local_quirks.pri
         qmake.exe -nocache "CONFIG+=release" pro.pro
         nmake.exe release -f Makefile
 
