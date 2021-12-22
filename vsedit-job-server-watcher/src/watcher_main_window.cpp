@@ -1,4 +1,4 @@
-#include "main_window.h"
+#include "watcher_main_window.h"
 
 #include "jobs/jobs_model.h"
 #include "jobs/job_state_delegate.h"
