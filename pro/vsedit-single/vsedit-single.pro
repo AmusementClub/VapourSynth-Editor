@@ -138,9 +138,9 @@ win32 {
 
 	INCLUDEPATH += 'C:/Program Files/VapourSynth/sdk/include/'
 
-	DEPLOY_COMMAND = windeployqt
-	DEPLOY_TARGET = $$shell_quote($$shell_path($${D}/$${TARGET}.exe))
-	QMAKE_POST_LINK += $${DEPLOY_COMMAND} --no-translations $${DEPLOY_TARGET} $${E}
+	#DEPLOY_COMMAND = windeployqt
+	#DEPLOY_TARGET = $$shell_quote($$shell_path($${D}/$${TARGET}.exe))
+	#QMAKE_POST_LINK += $${DEPLOY_COMMAND} --no-translations $${DEPLOY_TARGET} $${E}
 
 	if($$ARCHITECTURE_64_BIT) {
 		message("x86_64 build")

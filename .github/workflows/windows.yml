@@ -34,37 +34,13 @@ jobs:
         mkdir -p "C:/Program Files/VapourSynth/sdk/include/"
         mv vapoursynth/include "C:/Program Files/VapourSynth/sdk/include/vapoursynth"
 
-    - name: Cache Qt
-      id: cache-qt
-      uses: actions/cache@v2
-      with:
-        path: d:/qt-install
-        key: ${{ runner.os }}-qt6-static
-
-    - name: Setup cmake
-      uses: jwlawson/actions-setup-cmake@v1.9
-      with:
-        cmake-version: '3.22.1'
-
-    - name: Setup Ninja
-      uses: ashutoshvarma/setup-ninja@master
-
     - name: Download Qt
-      shell: bash
-      run: |
-        curl -Lo qt.zip https://download.qt.io/archive/qt/6.2/6.2.2/single/qt-everywhere-src-6.2.2.zip
-        unzip -q qt.zip
-        mv qt-everywhere-src-6* qt-src
-
-    - name: Build Qt
       shell: cmd
       run: |
-        cmake --version
-        ninja --version
-        mkdir qt-build
-        cd qt-build
-        call ../qt-src/configure.bat --prefix=d:\qt-install -static -static-runtime -no-opengl -release -ltcg -qt-zlib -qt-sqlite -no-sql-odbc -qt-libpng -qt-libjpeg -skip qt3d -skip qtactiveqt -skip qtcharts -skip qtconnectivity -skip qtdatavis3d -skip qtdoc -skip qtmultimedia -skip qtwayland -skip qtscxml -skip qtwebview -skip qtwebengine -skip qttranslations -skip qtlottie -skip qtmqtt -skip qtopcua -skip qtserialport -skip qtserialbus -skip qtvirtualkeyboard -skip qtwebchannel -skip qtpositioning -skip qtquick3d -skip qtsensors -skip qtcoap -skip qtnetworkauth -skip qtquicktimeline -skip qtremoteobjects -skip qtshadertools -feature-windeployqt -no-feature-linguist -no-feature-designer -no-feature-pixeltool -no-feature-assistant -no-feature-distancefieldgenerator -no-feature-qtattributionsscanner -no-feature-qtplugininfo -no-feature-macdeployqt -no-feature-qdbus -no-feature-qtdiag
-        ninja install
+        curl -Lo d:\qt.7z https://github.com/AmusementClub/VapourSynth-Editor/releases/download/qt-6.2.2/qt-install.7z
+        mkdir d:\qt-install
+        cd d:\qt-install
+        7z x ../qt.7z
 
     - name: Build
       shell: cmd
