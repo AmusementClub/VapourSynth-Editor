@@ -72,7 +72,7 @@ jobs:
         set PATH=d:\qt-install\bin;%PATH%
         cd pro
         echo # > local_quirks.pri
-        qmake.exe -nocache "CONFIG+=release" pro.pro
+        qmake.exe -nocache "CONFIG+=release" single.pro
         nmake.exe release -f Makefile
 
     - name: Set portable mode

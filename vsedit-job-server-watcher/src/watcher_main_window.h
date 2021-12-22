@@ -1,7 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <ui_main_window.h>
+#include <ui_watcher_main_window.h>
+#define MainWindow WatcherMainWindow
 
 #include "../../common-src/settings/settings_definitions_core.h"
 #include "../../common-src/settings/settings_definitions.h"

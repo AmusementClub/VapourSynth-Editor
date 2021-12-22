@@ -1,4 +1,4 @@
-#include "main_window.h"
+#include "watcher_main_window.h"
 
 #include "../../common-src/log/vs_editor_log.h"
 #include "../../common-src/application_instance_file_guard/application_instance_file_guard.h"
@@ -9,7 +9,7 @@
 
 MainWindow * pMainWindow = nullptr;
 
-void handleQtMessage(QtMsgType a_type, const QMessageLogContext & a_context,
+static void handleQtMessage(QtMsgType a_type, const QMessageLogContext & a_context,
 	const QString & a_message)
 {
 	QString prefix = "Qt debug";
