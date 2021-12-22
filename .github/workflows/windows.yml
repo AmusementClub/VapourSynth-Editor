@@ -38,18 +38,20 @@ jobs:
       shell: cmd
       run: |
         curl -Lo d:\qt.7z https://github.com/AmusementClub/VapourSynth-Editor/releases/download/qt-6.2.2/qt-install.7z
+        curl -Lo d:\jom.zip https://qt.mirror.constant.com/official_releases/jom/jom_1_1_3.zip
         mkdir d:\qt-install
         cd d:\qt-install
         7z x ../qt.7z
+        unzip -d bin d:\jom.zip
 
     - name: Build
       shell: cmd
       run: |
         set PATH=d:\qt-install\bin;%PATH%
         cd pro
-        echo # > local_quirks.pri
+        echo QMAKE_LFLAGS += '/LTCG' > local_quirks.pri
         qmake.exe -nocache "CONFIG+=release" single.pro
-        nmake.exe release -f Makefile
+        jom.exe release -f Makefile
 
     - name: Set portable mode
       shell: bash
