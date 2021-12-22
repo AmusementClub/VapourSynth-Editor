@@ -52,11 +52,21 @@ bool JobServerWatcherSocket::connectToJobServerWatcher()
 		return true;
 
 	QString watcherPath = vsedit::resolvePathFromApplication(
-		"./vsedit-job-server-watcher");
+#ifdef SINGLE_EXE
+		"./vsedit"
+#else
+		"./vsedit-job-server-watcher"
+#endif
+	);
 	QString thisDir = vsedit::resolvePathFromApplication(".");
 	QProcess watcherProcess;
 
-	bool started = watcherProcess.startDetached(watcherPath, QStringList(),
+#ifdef SINGLE_EXE
+	QStringList arguments;
+	arguments << "--job-watcher";
+#endif
+
+	bool started = watcherProcess.startDetached(watcherPath, arguments,
 		thisDir);
 	if(!started)
 	{

@@ -55,10 +55,11 @@ jobs:
       run: |
         cd pro
         echo # > local_quirks.pri
-        qmake.exe -nocache "CONFIG+=release" pro.pro
+        qmake.exe -nocache "CONFIG+=release" single.pro
         nmake.exe release -f Makefile
 
     - name: Remove unnecessary files
+      continue-on-error: true
       run: |
         cd build/release-64bit-msvc
         del vc_redist.x64.exe
@@ -83,7 +84,7 @@ jobs:
         mv release-64bit-msvc release/vsedit
         cd release/vsedit
         echo "[common]" > vsedit.config
-        echo "vapoursynth_library_paths=.." >> vsedit.config
+        #echo "vapoursynth_library_paths=.." >> vsedit.config
 
     - name: Upload
       uses: actions/upload-artifact@v2
