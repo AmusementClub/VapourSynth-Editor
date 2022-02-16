@@ -37,7 +37,7 @@ jobs:
     - name: Download Qt
       shell: cmd
       run: |
-        curl -Lo d:\qt.7z https://github.com/AmusementClub/VapourSynth-Editor/releases/download/qt-6.2.2/qt-install.7z
+        curl -Lo d:\qt.7z https://github.com/AmusementClub/VapourSynth-Editor/releases/download/qt-6.2.3/qt-install.7z
         curl -Lo d:\jom.zip https://qt.mirror.constant.com/official_releases/jom/jom_1_1_3.zip
         mkdir d:\qt-install
         cd d:\qt-install
